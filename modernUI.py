@@ -1,9 +1,19 @@
 import customtkinter
 
-dict={}
+dict={"Chinmay Verma":"Chunwar1234@","skdon":"skdon1234@"}
 
 customtkinter.set_appearance_mode("System")
 customtkinter.set_default_color_theme("blue")
+
+def show_password():
+    password_window=customtkinter.CTk()
+    x=dropdown.get()
+    word=dict.get(x)
+    frame=customtkinter.CTkFrame(master=password_window)
+    frame.pack(padx=60,pady=20,fill="both",expand=True)
+    label=customtkinter.CTkLabel(master=frame, text=word, font=("Arial",18))
+    label.pack(padx=20,pady=20)
+    password_window.mainloop()
 
 def submit_button():
     dict[username.get()]=password.get()
@@ -34,6 +44,27 @@ def create():
 
     create_window.mainloop()
 
+def look():
+    look_window=customtkinter.CTk()
+    look_window.title("Show Password Window")
+    look_window.geometry("500x350")
+    look_window.minsize(500,350)
+    look_window.maxsize(500,350)
+    frame=customtkinter.CTkFrame(master=look_window)
+    frame.pack(padx=60,pady=20,fill="both",expand=True)
+    label=customtkinter.CTkLabel(master=frame,text="Choose Username", font=("Arial",18))
+    label.pack(padx=20,pady=20)
+    global dropdown
+    dropdown=customtkinter.CTkComboBox(master=frame)
+    dropdown.set("")
+    options=dict.keys()
+    dropdown.configure(values=options)
+    dropdown.pack(padx=20,pady=20)      
+    button=customtkinter.CTkButton(master=frame,text="Submit Username", font=("Arial",18),command=show_password)
+    button.pack(padx=20,pady=20)
+    look_window.mainloop()
+
+
 root=customtkinter.CTk()
 
 root.geometry("500x350")
@@ -48,7 +79,7 @@ label=customtkinter.CTkLabel(master=frame, text="Password Manager", font=("Arial
 label.pack(padx=20,pady=20)
 
 create_button=customtkinter.CTkButton(master=frame,text="Create",font=("Arial",18),command=create)
-See_password=customtkinter.CTkButton(master=frame,text="See Password",font=("Arial",18))
+See_password=customtkinter.CTkButton(master=frame,text="See Password",font=("Arial",18),command=look)
 exit=customtkinter.CTkButton(master=frame,text="Exit",font=("Arial",18))
 create_button.pack(padx=20,pady=20)
 See_password.pack(padx=20,pady=20)
