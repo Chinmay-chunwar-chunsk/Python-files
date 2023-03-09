@@ -65,6 +65,42 @@ def look():
     look_window.mainloop()
 
 
+def check():
+    if master_password.get()=="Chunwar1234@":
+        look()
+    else:
+        look_window=customtkinter.CTk()
+        look_window.title("Show Password Window")
+        look_window.geometry("500x350")
+        look_window.minsize(500,350)
+        look_window.maxsize(500,350)
+        frame=customtkinter.CTkFrame(master=look_window)
+        frame.pack(padx=60,pady=20,fill="both",expand=True)
+        test=customtkinter.CTkLabel(text="Wrong password enter password again",font=("Arial",18))
+        test.pack(padx=20,pady=20)
+        look_window.mainloop()
+
+
+def master_password():
+    look_window=customtkinter.CTk()
+    look_window.title("Show Password Window")
+    look_window.geometry("500x350")
+    look_window.minsize(500,350)
+    look_window.maxsize(500,350)
+    frame=customtkinter.CTkFrame(master=look_window)
+    frame.pack(padx=60,pady=20,fill="both",expand=True)
+    label_password=customtkinter.CTkLabel(master=frame,text="Enter Master Password",font=("Arial",18))
+    label_password.pack(padx=20,pady=20)
+    global master_password
+    master_password=customtkinter.CTkEntry(master=frame, placeholder_text="Master Passsword",show="•")
+    master_password.pack(padx=20,pady=20)
+    button=customtkinter.CTkButton(master=frame,text="Submit",font=("Arial",18), command=check)
+    button.pack(padx=20,pady=20)
+    look_window.mainloop()
+
+def destroy():
+    root.destroy()
+
 root=customtkinter.CTk()
 
 root.geometry("500x350")
@@ -79,8 +115,8 @@ label=customtkinter.CTkLabel(master=frame, text="Password Manager", font=("Arial
 label.pack(padx=20,pady=20)
 
 create_button=customtkinter.CTkButton(master=frame,text="Create",font=("Arial",18),command=create)
-See_password=customtkinter.CTkButton(master=frame,text="See Password",font=("Arial",18),command=look)
-exit=customtkinter.CTkButton(master=frame,text="Exit",font=("Arial",18))
+See_password=customtkinter.CTkButton(master=frame,text="See Password",font=("Arial",18),command=master_password)
+exit=customtkinter.CTkButton(master=frame,text="Exit",font=("Arial",18),command=destroy)
 create_button.pack(padx=20,pady=20)
 See_password.pack(padx=20,pady=20)
 exit.pack(padx=20,pady=20)
