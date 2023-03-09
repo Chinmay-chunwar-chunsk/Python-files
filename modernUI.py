@@ -1,9 +1,42 @@
 import customtkinter
+import ast
+import os 
+from cryptography.fernet import Fernet 
 
-dict={"Chinmay Verma":"Chunwar1234@","skdon":"skdon1234@"}
 
 customtkinter.set_appearance_mode("System")
 customtkinter.set_default_color_theme("blue")
+
+
+def encrypt():
+    files=[]
+    for file in os.listdir():
+        if file=="thepassword.txt":
+            files.append(file)
+    key = Fernet.generate_key()
+    with open("thekey.key", "wb") as thekey:
+        thekey.write(key)
+    for file in files:
+        with open(file, "rb")as thefile:
+            contents=thefile.read()
+        contents_encrypted=Fernet(key).encrypt(contents)
+        with open(file, "wb")as thefile:
+            thefile.write(contents_encrypted)
+        
+def decrypt():
+    files=[]
+    for file in os.listdir():
+        if file=="thepassword.txt":
+            files.append(file)
+    with open("thekey.key", "rb") as key:
+        secretkey=key.read()
+    for file in files:
+        with open(file, "rb") as thefile:
+            contents=thefile.read()
+        contents_decrypted=Fernet(secretkey).decrypt(contents)
+        with open(file, "wb")as thefile:
+            thefile.write(contents_decrypted)
+
 
 def show_password():
     password_window=customtkinter.CTk()
@@ -101,6 +134,12 @@ def master_password():
 def destroy():
     root.destroy()
 
+decrypt()
+dict=""
+with open("thepassword.txt", "r") as file:
+    data=file.read()
+dict = ast.literal_eval(data)
+
 root=customtkinter.CTk()
 
 root.geometry("500x350")
@@ -120,5 +159,12 @@ exit=customtkinter.CTkButton(master=frame,text="Exit",font=("Arial",18),command=
 create_button.pack(padx=20,pady=20)
 See_password.pack(padx=20,pady=20)
 exit.pack(padx=20,pady=20)
+
+
+with open("thepassword.txt", "w+") as file:
+    data=str(dict)
+    file.write(data)
+    file.close
+encrypt()
 
 root.mainloop()
