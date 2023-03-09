@@ -49,9 +49,25 @@ def show_password():
     password_window.mainloop()
 
 def submit_button():
-    dict[username.get()]=password.get()
-    create_window.destroy()
-    print(dict)
+    counter=0
+    for i in dict:
+        if username.get()==i:
+            look_window=customtkinter.CTk()
+            look_window.title("Check")
+            look_window.geometry("500x350")
+            look_window.minsize(500,350)
+            look_window.maxsize(500,350)
+            frame=customtkinter.CTkFrame(master=look_window)
+            frame.pack(padx=60,pady=20,fill="both",expand=True)
+            test=customtkinter.CTkLabel(master=frame,text="Username already exists",font=("Arial",18))
+            test.pack(padx=20,pady=20)
+            look_window.mainloop()
+        else:
+            counter+=1
+            if counter==len(dict):
+                dict[username.get()]=password.get()
+                create_window.destroy()
+                print(dict)
 
 def create():
     global create_window
@@ -76,6 +92,9 @@ def create():
     submit.pack(padx=20,pady=20)
 
     create_window.mainloop()
+    with open("thepassword.txt", "w") as file:
+        file.write(str(dict))
+        file.close
 
 def look():
     look_window=customtkinter.CTk()
@@ -103,13 +122,13 @@ def check():
         look()
     else:
         look_window=customtkinter.CTk()
-        look_window.title("Show Password Window")
+        look_window.title("Checking")
         look_window.geometry("500x350")
         look_window.minsize(500,350)
         look_window.maxsize(500,350)
         frame=customtkinter.CTkFrame(master=look_window)
         frame.pack(padx=60,pady=20,fill="both",expand=True)
-        test=customtkinter.CTkLabel(text="Wrong password enter password again",font=("Arial",18))
+        test=customtkinter.CTkLabel(master=frame,text="Wrong password enter password again",font=("Arial",18))
         test.pack(padx=20,pady=20)
         look_window.mainloop()
 
@@ -138,7 +157,7 @@ decrypt()
 dict=""
 with open("thepassword.txt", "r") as file:
     data=file.read()
-dict = ast.literal_eval(data)
+    dict = ast.literal_eval(data)
 
 root=customtkinter.CTk()
 
@@ -161,10 +180,6 @@ See_password.pack(padx=20,pady=20)
 exit.pack(padx=20,pady=20)
 
 
-with open("thepassword.txt", "w+") as file:
-    data=str(dict)
-    file.write(data)
-    file.close
-encrypt()
 
 root.mainloop()
+encrypt()
