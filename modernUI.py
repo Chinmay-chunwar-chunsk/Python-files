@@ -40,6 +40,7 @@ def decrypt():
 
 def show_password():
     password_window=customtkinter.CTk()
+    password_window.title("Password")
     x=dropdown.get()
     word=dict.get(x)
     frame=customtkinter.CTkFrame(master=password_window)
