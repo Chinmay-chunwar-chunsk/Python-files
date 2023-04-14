@@ -2,6 +2,7 @@ import ttkbootstrap as ttk
 from ttkbootstrap.toast import ToastNotification
 from ttkbootstrap.scrolled import ScrolledFrame
 import string
+import pyperclip as pc
 import os
 from PIL import Image, ImageTk
 import time
@@ -65,7 +66,110 @@ class Editor(ScrolledFrame):
         Editorself=self
         Editor.back_button()
         Editor.title_button()
+        self.bind("<Button - 3>", lambda event: Editor.Menu(event))
 
+    def get_copy(root,drop):
+        get=drop.get()
+        data=""
+        with open(get,"r") as file:
+            data=file.read()
+        pc.copy(data)
+        root.destroy()
+    
+    def copy():
+        root=ttk.Window(themename="darkly")
+        root.geometry("300x300")
+        drop=ttk.Combobox(master=root)
+        items=[]
+        for item in os.listdir():
+            if os.path.isfile(item):
+                items.append(item)
+        drop.configure(values=items)
+        drop.pack(padx=20,pady=20)
+        button=ttk.Button(master=root, text="COPY",style="info-outline",command=lambda root=root,drop=drop: Editor.get_copy(root,drop))
+        button.pack(padx=20,pady=20)
+        root.mainloop()
+
+    def create_file(Entry,Content,root):
+        name=Entry.get()
+        file_content=Content.get(1.0,"end-1c")
+        with open(name+".txt","w") as file:
+            file.write(file_content)
+        root.destroy()
+        Editor.drive_commands(os.getcwd())
+        
+
+    def new_file(Oldroot):
+        Oldroot.destroy()
+        root=ttk.Window(themename="darkly")
+        entry=ttk.Entry(master=root)
+        label=ttk.Label(master=root,text="Enter file name")
+        content=ttk.Text(master=root)
+        save=ttk.Button(master=root,bootstyle="info-outline",text="Save",command=lambda root=root,Entry=entry, Content=content: Editor.create_file(Entry,Content,root))
+        label.pack(padx=20,pady=20)
+        entry.pack(padx=20,pady=20)
+        content.pack(padx=20,pady=20,expand=True,fill="both")
+        save.pack(padx=20,pady=20)
+        root.mainloop()
+
+    def create_new_folder(Entry,root):
+        root.destroy()
+        name=Entry.get()
+        os.mkdir(name)
+        Editor.drive_commands(os.getcwd())
+
+
+    def new_folder(Oldroot):
+        Oldroot.destroy()
+        root=ttk.Window(themename="darkly")
+        label=ttk.Label(master=root,text="Enter Folder Name")
+        entry=ttk.Entry(master=root)
+        button=ttk.Button(master=root,text="CREATE",style="info-outline",command=lambda root=root,Entry=entry: Editor.create_new_folder(Entry,root))
+        label.pack(padx=20,pady=20)
+        entry.pack(padx=20,pady=20)
+        button.pack(padx=20,pady=20)
+        root.mainloop()
+
+    def new():
+        root=ttk.Window(themename="darkly")
+        button1=ttk.Button(master=root,text="New Folder",style="info-outline",command=lambda Oldroot=root: Editor.new_folder(Oldroot))
+        button2=ttk.Button(master=root,text="New Text File",style="info-outline",command=lambda Oldroot=root: Editor.new_file(Oldroot))
+        button1.pack(padx=20,pady=20)
+        button2.pack(padx=20,pady=20)
+        root.mainloop()
+
+    def delete():
+        root=ttk.Window(themename="darkly")
+        root.geometry("300x300")
+        items=[]
+        drop=ttk.Combobox(master=root)
+        drop.pack(padx=20,pady=20)
+        for item in os.listdir():
+            items.append(item)
+        drop.configure(values=items)
+        button=ttk.Button(master=root,text="DELETE",command=lambda root=root,drop=drop: Editor.delete_file(drop,root))
+        button.pack(padx=20,pady=20)
+        root.mainloop()
+
+    def delete_file(drop,root):
+        name=drop.get()
+        for item in os.listdir():
+            if item==name:
+                if os.path.isfile(item):
+                    os.remove(item)
+                else:
+                    os.rmdir(item)
+        root.destroy()
+        Editor.drive_commands(os.getcwd())
+
+    def Menu(event):
+        menu=ttk.Menu(master=Editorself)
+        menu.add_command(label="Copy",command=Editor.copy)
+        menu.add_separator()
+        menu.add_command(label="New",command=Editor.new)
+        menu.add_separator()
+        menu.add_command(label="Delete",command=Editor.delete)
+        menu.tk_popup(event.x_root,event.y_root)
 
     def getfilesize(item,counter):
         unit="bytes"
@@ -94,6 +198,7 @@ class Editor(ScrolledFrame):
 
     def get_dir(Entry):
         drive=Entry.get()
+        print(drive)
         Editor.drive_commands(drive)
 
     #back button command
@@ -156,7 +261,7 @@ class Editor(ScrolledFrame):
             #files
             if os.path.isfile(item):
                 Editor.getfilesize(item,counter)
-                newfile=ttk.Button(master=Editorself,text=item,style="light-outline",command=lambda m=item: Editor.type_file(m))
+                newfile=ttk.Button(master=Editorself,text=item,style="light-outline",command=lambda m=item: Editor.open_file(m))
                 newfile.grid(row=counter,column=0,sticky="w")
                 counter+=1
             #folder
@@ -167,13 +272,9 @@ class Editor(ScrolledFrame):
                 counter+=1
 
     #typing selected file
-    def type_file(m):
-        root=ttk.Window(themename="darkly")
-        root.title(m)
-        data=""
-        with open(m,"r") as file:
-            data=file.read()
-        label=ttk.Label(master=root,text=data)
-        label.pack(fill="both",expand=True)
-        root.mainloop()
+    def open_file(m):
+        os.startfile(m)
+
+
 App()
+
